@@ -3150,6 +3150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runSpeed: 10
+  jumpSpeed: 28
 --- !u!1001 &1478226677
 Prefab:
   m_ObjectHideFlags: 0
@@ -3188,6 +3189,11 @@ Prefab:
     - target: {fileID: 4227863867187426, guid: 456dee37c0d791948900139a3af4220f, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 50305098917032992, guid: 456dee37c0d791948900139a3af4220f,
+        type: 2}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 456dee37c0d791948900139a3af4220f, type: 2}

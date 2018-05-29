@@ -6,6 +6,7 @@ using UnityStandardAssets.CrossPlatformInput;
 public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 5;
+    [SerializeField] float jumpSpeed = 5;
 
     bool isAlive = true;
 
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         Run();
+        Jump();
     }
 
     void Run()
@@ -39,6 +41,15 @@ public class Player : MonoBehaviour
         if (playerHasHorizontalSpeed)
         {
             FlipSpriteDirection();
+        }
+    }
+
+    void Jump() 
+    {
+        if (CrossPlatformInputManager.GetButtonDown("Jump"))
+        {
+            Vector2 jumpVelocityToAdd = new Vector2(0, jumpSpeed);
+            myRigidbody.velocity += jumpVelocityToAdd;
         }
     }
 
