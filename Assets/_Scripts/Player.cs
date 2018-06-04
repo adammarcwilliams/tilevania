@@ -7,19 +7,26 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 5;
     [SerializeField] float jumpSpeed = 5;
+    [SerializeField] float climbSpeed = 5;
+
+    float initialGravityScale;
 
     bool isAlive = true;
 
     Rigidbody2D myRigidbody;
     Animator myAnimator;
-    Collider2D myCollider;
+    CapsuleCollider2D myBodyCollider;
+    BoxCollider2D myFeetCollider;
 
     // Use this for initialization
     void Start()
     {
         myRigidbody = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
-        myCollider = GetComponent<Collider2D>();
+        myBodyCollider = GetComponent<CapsuleCollider2D>();
+        myFeetCollider = GetComponent<BoxCollider2D>();
+
+        initialGravityScale = myRigidbody.gravityScale;
     }
 
     // Update is called once per frame
@@ -27,6 +34,7 @@ public class Player : MonoBehaviour
     {
         Run();
         Jump();
+        Climb();
     }
 
     void Run()
@@ -48,11 +56,31 @@ public class Player : MonoBehaviour
 
     void Jump() 
     {
-        if (CrossPlatformInputManager.GetButtonDown("Jump") && myCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (CrossPlatformInputManager.GetButtonDown("Jump") && myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             Vector2 jumpVelocityToAdd = new Vector2(0, jumpSpeed);
             myRigidbody.velocity += jumpVelocityToAdd;
         }
+    }
+
+    void Climb()
+    {
+        if (!myBodyCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
+        {
+            myAnimator.SetBool("Climbing", false);
+            myRigidbody.gravityScale = initialGravityScale;
+            return;
+        }
+
+        myRigidbody.gravityScale = 0;
+
+        float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
+        Vector2 climbVelocity = new Vector2(myRigidbody.velocity.x, controlThrow * climbSpeed);
+        myRigidbody.velocity = climbVelocity;
+
+        bool playerHasVerticalSpeed = Mathf.Abs(myRigidbody.velocity.y) > Mathf.Epsilon;
+        myAnimator.SetBool("Climbing", playerHasVerticalSpeed);
+
     }
 
     void FlipSpriteDirection()
