@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] float runSpeed = 5;
     [SerializeField] float jumpSpeed = 5;
     [SerializeField] float climbSpeed = 5;
+    [SerializeField] float deathKick = 25;
 
     float initialGravityScale;
 
@@ -32,9 +33,15 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
+
         Run();
         Jump();
         Climb();
+        Die();
     }
 
     void Run()
@@ -47,14 +54,14 @@ public class Player : MonoBehaviour
         // Update animation state & sprite direction
         bool playerHasHorizontalSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
         myAnimator.SetBool("Running", playerHasHorizontalSpeed);
-        
+
         if (playerHasHorizontalSpeed)
         {
             FlipSpriteDirection();
         }
     }
 
-    void Jump() 
+    void Jump()
     {
         if (CrossPlatformInputManager.GetButtonDown("Jump") && myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
@@ -81,6 +88,30 @@ public class Player : MonoBehaviour
         bool playerHasVerticalSpeed = Mathf.Abs(myRigidbody.velocity.y) > Mathf.Epsilon;
         myAnimator.SetBool("Climbing", playerHasVerticalSpeed);
 
+    }
+
+    void Die()
+    {
+        if (myBodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy")))
+        {
+            isAlive = false;
+            myAnimator.SetTrigger("Dying");
+
+            if (IsFacingRight())
+            {
+                myRigidbody.velocity = new Vector2(-deathKick, deathKick);
+            }
+            else
+            {
+                myRigidbody.velocity = new Vector2(deathKick, deathKick);
+            }
+
+        }
+    }
+
+    bool IsFacingRight()
+    {
+        return this.transform.localScale.x > 0;
     }
 
     void FlipSpriteDirection()
