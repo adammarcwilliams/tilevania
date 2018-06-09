@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
             {
                 myRigidbody.velocity = new Vector2(deathKick, deathKick);
             }
-
+            FindObjectOfType<GameSession>().ProcessPlayerDeath();
         }
     }
 
